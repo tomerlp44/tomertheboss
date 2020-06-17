@@ -1,0 +1,33 @@
+#!/bin/bash
+
+arg_count=$#
+des_path=$`$arg_count`
+loop_counter=1
+size_counter=0
+
+SERVER=$(hostname)
+if [ $SERVER = 'server1']
+then
+   while [ "$loop_counter" -ne "$arg_count" ]
+   do
+       scp -r $`$loop_counter` vagrant@192.168.100.11:$des_path
+       size_counter= size_counter+`du -sb $`$loop_counter` | awk '{print $1}' `
+       loop_counter=$loop_counter+1
+   done
+
+else
+   while [ "$loop_counter" -ne "$arg_count" ]
+   do
+       scp $`$loop_counter` vagrant@192.168.100.10:$des_path
+       size_counter= size_counter+`du -sb $`$loop_counter` | awk '{print $1}' `
+       loop_counter=$loop_counter+1
+   done
+
+fi
+
+echo $size_counter
+
+
+#not relevant:
+#scp -r $1 $2 vagrant@192.168.100.11:$3 &> /tmp/scp_log.txt
+#tail -n 3 /tmp/scp_log.txt | head -n 1 | awk '{print $3}'
